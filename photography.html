@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akshat's Photography</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap');
+
+        :root {
+            --background-dark: #0a0a0f;
+            --background-light: #111118;
+            --primary-color: #4ecdc4;
+            --accent-color: #a8dadc;
+            --text-primary: #e6e6e6;
+            --text-secondary: #94a3b8;
+            --hover-color: #45b7d1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header (Matching Portfolio Style) */
+        header {
+            position: fixed;
+            width: 100%;
+            background-color: rgba(11, 11, 19, 0.9);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        nav .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: -1px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Gallery Container */
+        .gallery-container {
+            padding-top: 100px;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .gallery-header h1 {
+            color: var(--primary-color);
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .gallery-header p {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Updated Gallery Layout */
+        .photo-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 0 20px;
+        }
+
+        .gallery-item {
+            flex: 1 1 calc(25% - 20px);
+            max-width: calc(25% - 20px);
+            aspect-ratio: 1; /* Ensures all images are squares */
+            margin-bottom: 20px;
+            background-color: var(--background-light);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Crops images to fit within square containers */
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(78, 205, 196, 0.2);
+        }
+
+        .gallery-item .image-overlay {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item .image-details {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .image-details {
+            opacity: 1;
+        }
+
+        .image-details h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 1200px) {
+            .gallery-item {
+                flex: 1 1 calc(33.333% - 20px);
+                max-width: calc(33.333% - 20px);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .gallery-item {
+                flex: 1 1 calc(50% - 20px);
+                max-width: calc(50% - 20px);
+            }
+
+            nav ul {
+                display: none;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .gallery-item {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+        }
+
+        /* Modal for Image Viewing */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 1200px;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: var(--primary-color);
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--accent-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo"><a href="index.html" style="color:#a8dadc ; font-family: 'Space Grotesk', sans-serif; text-decoration: none;
+                ">Akshat</a></div>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="gallery-container">
+        <div class="gallery-header">
+            <h1>Photography Portfolio</h1>
+            <p>A collection of moments captured through my lens, exploring light, emotion, and the subtle nuances of the world around us.</p>
+        </div>
+
+        <div class="photo-gallery" id="gallery">
+            <div class="gallery-item">
+                <div class="image-overlay">
+                    <img src="../images/photo1.jpg" alt="Landscape Photography" onclick="openModal(this)">
+                    <div class="image-details">
+                        <h3>Misty Mountains</h3>
+                        <p>Landscape Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="image-overlay">
+                    <img src="../images/photo2.jpg" alt="Urban Photography" onclick="openModal(this)">
+                    <div class="image-details">
+                        <h3>City Lights</h3>
+                        <p>Urban Night Scene</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="image-overlay">
+                    <img src="../images/photo3.jpg" alt="Portrait Photography" onclick="openModal(this)">
+                    <div class="image-details">
+                        <h3>Ethereal Portrait</h3>
+                        <p>Conceptual Portrait</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="image-overlay">
+                    <img src="../images/photo4.jpg" alt="Nature Photography" onclick="openModal(this)">
+                    <div class="image-details">
+                        <h3>Forest Whispers</h3>
+                        <p>Nature Landscape</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="image-overlay">
+                    <img src="../images/photo5.jpg" alt="Street Photography" onclick="openModal(this)">
+                    <div class="image-details">
+                        <h3>Urban Moments</h3>
+                        <p>Street Photography</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item">
+                <div class="image-overlay">
+                    <img src="../images/photo6.jpg" alt="Minimalist Photography" onclick="openModal(this)">
+                    <div class="image-details">
+                        <h3>Geometric Silence</h3>
+                        <p>Minimalist Composition</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <script>
+        function openModal(img) {
+            var modal = document.getElementById('imageModal');
+            var modalImg = document.getElementById('modalImage');
+            modal.style.display = "flex";
+            modalImg.src = img.src;
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('imageModal');
+            modal.style.display = "none";
+        }
+
+        // Close modal when clicking outside the image
+        window.onclick = function(event) {
+            var modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
